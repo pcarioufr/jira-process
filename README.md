@@ -9,9 +9,11 @@ This requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) 
 
 Update environment variables in [.env](.env):
 
-* Write your login email in JIRA_EMAIL 
-* [Create JIRA API Token](https://id.atlassian.com/manage-profile/security/api-tokens) and write in JIRA_TOKEN
-* Write the JIRA Project for which you want to retrive issues in JIRA_PROJECT
+* `JIRA_EMAIL`: your login email in JIRA 
+* `JIRA_TOKEN`: an API Token created [here](https://id.atlassian.com/manage-profile/security/api-tokens) and write in 
+* `JIRA_PROJECT`: the JIRA Project for which you want to retrive issues in 
+* `JIRA_STATUSES`: the statuses for which you want to retrieve issues. Beware the usage of simple and double quotes, and comma separation. Follow the model given in [.env](.env))
+* `JIRA_FIELDS`: fields to retrieve for each issue, use coma separated values. To get custom_fields identifiers, pick whichever JIRA issue and export it as XML: the custom fields name will appear here.
 
 
 ## RUN 
@@ -20,4 +22,4 @@ Update environment variables in [.env](.env):
 docker compose up
 ```
 
-see result in `data/output.json`
+see result in `data/<JIRA_PROJECT>.json`

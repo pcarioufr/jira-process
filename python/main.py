@@ -3,10 +3,11 @@ import json
 import os
 import base64
 
-JIRA_EMAIL   = os.getenv('JIRA_EMAIL')
-JIRA_TOKEN   = os.getenv('JIRA_TOKEN')
-JIRA_PROJECT = os.getenv('JIRA_PROJECT')
-
+JIRA_EMAIL    = os.getenv('JIRA_EMAIL')
+JIRA_TOKEN    = os.getenv('JIRA_TOKEN')
+JIRA_PROJECT  = os.getenv('JIRA_PROJECT')
+JIRA_STATUSES = os.getenv('JIRA_STATUSES')
+JIRA_FIELDS   = os.getenv('JIRA_FIELDS')
 
 # 1. Combine email and token into "email:token" format
 credentials = f"{JIRA_EMAIL}:{JIRA_TOKEN}"
@@ -33,9 +34,9 @@ def fetch_data():
 
         params = {
             "startAt": i * 100,
-            "jql": f"project = {JIRA_PROJECT} AND status NOT IN (Released, \"Won't Do\") ORDER BY created DESC",
+            "jql": f"project = {JIRA_PROJECT} AND status IN ({JIRA_STATUSES}) ORDER BY created DESC",
             "maxResults": RESULTS_PER_ITERATION,
-            "fields": "summary,description,customfield_10237,customfield_10236"
+            "fields": f"{JIRA_FIELDS}"
         }
         response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
@@ -50,7 +51,7 @@ def fetch_data():
             print(f"Failed to fetch data, status code: {response.status_code}, response content: {response.content}")
             break
 
-    with open('/data/output.json', 'w') as outfile:
+    with open(f"/data/{JIRA_PROJECT}.json", 'w') as outfile:
         json.dump(all_data, outfile, indent=2)
 
 if __name__ == "__main__":

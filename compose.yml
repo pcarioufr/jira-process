@@ -12,5 +12,7 @@ services:
       - JIRA_TOKEN
       - JIRA_EMAIL
       - JIRA_PROJECT
+      - JIRA_STATUSES
+      - JIRA_FIELDS
       - MAX_RESULTS=10000
     command: python3 main.py
