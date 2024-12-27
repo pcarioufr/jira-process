@@ -8,6 +8,7 @@ import logging
 handler = logging.StreamHandler(sys.stdout)
 
 logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s',
     level=logging.INFO,
     handlers=[handler],
     force=True
@@ -19,7 +20,7 @@ JIRA_PROJECT  = os.getenv('JIRA_PROJECT')
 JIRA_STATUSES = os.getenv('JIRA_STATUSES')
 JIRA_FIELDS   = os.getenv('JIRA_FIELDS')
 
-# 1. Combine email and token into "email:token" format
+# Combine email and token into "email:token" format
 credentials = f"{JIRA_EMAIL}:{JIRA_TOKEN}"
 credentials_bytes = credentials.encode("utf-8")
 credentials_b64 = base64.b64encode(credentials_bytes)
@@ -27,10 +28,11 @@ credentials_b64_str = credentials_b64.decode("utf-8")
 
 MAX_RESULTS = os.getenv('MAX_RESULTS')
 RESULTS_PER_ITERATION = 100
-MAX_ITERATIONS = int(MAX_RESULTS) // RESULTS_PER_ITERATION
+MAX_ITERATIONS = int(MAX_RESULTS) // RESULTS_PER_ITERATION + 1
 
 
 def fetch_data():
+
     url = "https://datadoghq.atlassian.net/rest/api/2/search"
     headers = {
         "Content-Type": "application/json",
@@ -40,15 +42,16 @@ def fetch_data():
 
     for i in range(MAX_ITERATIONS):
 
-        logging.info(f"Fetching results {i * 100}...")
+        logging.info(f"Fetching results {i * RESULTS_PER_ITERATION}...")
 
         params = {
-            "startAt": i * 100,
+            "startAt": i * RESULTS_PER_ITERATION,
             "jql": f"project = {JIRA_PROJECT} AND status IN ({JIRA_STATUSES}) ORDER BY created DESC",
             "maxResults": RESULTS_PER_ITERATION,
             "fields": f"summary,description,comment,created,{JIRA_FIELDS}"
         }
         response = requests.get(url, headers=headers, params=params)
+
         if response.status_code == 200:
 
             resp = response.json()
