@@ -9,11 +9,9 @@ This requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) 
 
 Update environment variables in [.env](.env):
 
-* Register your JIRA EMAIL
-* [Create JIRA API Token](https://id.atlassian.com/manage-profile/security/api-tokens)
-
-For help on JQL (jira query language)
-https://datadoghq.atlassian.net/issues/?jql=created%20>=%20-30d%20order%20by%20created%20DESC
+* Write your login email in JIRA_EMAIL 
+* [Create JIRA API Token](https://id.atlassian.com/manage-profile/security/api-tokens) and write in JIRA_TOKEN
+* Write the JIRA Project for which you want to retrive issues in JIRA_PROJECT
 
 
 ## RUN 
