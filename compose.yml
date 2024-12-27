@@ -1,0 +1,14 @@
+
+
+services:
+
+  python:
+    container_name: python
+    build: python/build/.
+    volumes:
+      - ./python:/python
+      - ./data:/data
+    environment:
+      - JIRA_TOKEN
+      - JIRA_EMAIL
+    command: python3 main.py
