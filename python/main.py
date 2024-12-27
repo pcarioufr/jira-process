@@ -40,23 +40,40 @@ def fetch_data():
 
     for i in range(MAX_ITERATIONS):
 
-        logging.info(f"Fetching results=[{i * 100} - {(i + 1) * 100 - 1}]")
+        logging.info(f"Fetching results {i * 100}...")
 
         params = {
             "startAt": i * 100,
             "jql": f"project = {JIRA_PROJECT} AND status IN ({JIRA_STATUSES}) ORDER BY created DESC",
             "maxResults": RESULTS_PER_ITERATION,
-            "fields": f"{JIRA_FIELDS}"
+            "fields": f"summary,description,comment,created,{JIRA_FIELDS}"
         }
         response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
 
             resp = response.json()
-            data = resp.get('issues')
-            if not data:
+            if not resp.get('issues'):
                 logging.info(f"No more results - Stopping")
                 break
+
+            data = [
+                {
+                    "key": item["key"],
+                    "fields": {k: v for k, v in item["fields"].items() if k != "comment"},
+                    "comments": [ 
+                        { 
+                            "body": comment["body"],
+                            "created": comment["created"],
+                            "author": comment["author"]["displayName"]
+                        }
+                        for comment in item["fields"]["comment"]["comments"] 
+                    ]
+                } 
+                for item in resp.get('issues')
+            ]
+
             all_data.extend(data)
+
         else:
             logging.info(f"Failed to fetch data, status code: {response.status_code}, response content: {response.content}")
             break

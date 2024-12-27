@@ -13,7 +13,7 @@ Update environment variables in [.env](.env):
 * `JIRA_TOKEN`: an API Token created [here](https://id.atlassian.com/manage-profile/security/api-tokens) and write in 
 * `JIRA_PROJECT`: the JIRA Project for which you want to retrive issues in 
 * `JIRA_STATUSES`: the statuses for which you want to retrieve issues. Beware the usage of simple and double quotes, and comma separation. Follow the model given in [.env](.env))
-* `JIRA_FIELDS`: fields to retrieve for each issue, use coma separated values. To get custom_fields identifiers, pick whichever JIRA issue and export it as XML: the custom fields name will appear here.
+* `JIRA_FIELDS`: fields to retrieve for each issue, use coma separated values (title, date, description, and comments are included by default). To get custom_fields identifiers, pick whichever JIRA issue and export it as XML: the custom fields name will appear here.
 
 
 ## RUN 
