@@ -48,7 +48,7 @@ def fetch_data():
             "startAt": i * RESULTS_PER_ITERATION,
             "jql": f"project = {JIRA_PROJECT} AND status IN ({JIRA_STATUSES}) ORDER BY created DESC",
             "maxResults": RESULTS_PER_ITERATION,
-            "fields": f"summary,description,comment,created,{JIRA_FIELDS}"
+            "fields": f"summary,description,comment,created,issuelinks,{JIRA_FIELDS}"
         }
         response = requests.get(url, headers=headers, params=params)
 
@@ -61,8 +61,17 @@ def fetch_data():
 
             data = [
                 {
-                    "key": item["key"],
-                    "fields": {k: v for k, v in item["fields"].items() if k != "comment"},
+                    "id":   item["id"],
+                    "key":  item["key"],
+                    "fields": {k: v for k, v in item["fields"].items() if k not in ["comment", "issuelinks"]},
+                    "issuelinks": [
+                        {
+                            "type": link["type"].get("outward", link["type"].get("inward")),
+                            "key":  link.get("outwardIssue", link.get("inwardIssue")).get("key"),
+                            "summary": link.get("outwardIssue", link.get("inwardIssue")).get("fields", {}).get("summary")
+                        }
+                        for link in item["fields"]["issuelinks"]
+                    ] if item["fields"]["issuelinks"] else [],
                     "comments": [ 
                         { 
                             "body": comment["body"],
@@ -70,7 +79,7 @@ def fetch_data():
                             "author": comment["author"]["displayName"]
                         }
                         for comment in item["fields"]["comment"]["comments"] 
-                    ]
+                    ] if item["fields"]["comment"]["comments"] else []
                 } 
                 for item in resp.get('issues')
             ]
