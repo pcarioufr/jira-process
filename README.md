@@ -1,6 +1,6 @@
 # jira-process
 
-A python script which runs in a containerized Alpine-linux (for full portability).
+A python script which runs in a containerized Alpine-linux (for full portability), to retrieve all issues in JIRA, for processing purposes.
 
 This requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
 
