@@ -1,7 +1,17 @@
 import requests
 import json
-import os
+import os, sys
 import base64
+
+import logging
+
+handler = logging.StreamHandler(sys.stdout)
+
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[handler],
+    force=True
+)
 
 JIRA_EMAIL    = os.getenv('JIRA_EMAIL')
 JIRA_TOKEN    = os.getenv('JIRA_TOKEN')
@@ -30,7 +40,7 @@ def fetch_data():
 
     for i in range(MAX_ITERATIONS):
 
-        print(f"Fetching results=[{i * 100} - {(i + 1) * 100 - 1}]")
+        logging.info(f"Fetching results=[{i * 100} - {(i + 1) * 100 - 1}]")
 
         params = {
             "startAt": i * 100,
@@ -44,11 +54,11 @@ def fetch_data():
             resp = response.json()
             data = resp.get('issues')
             if not data:
-                print(f"No more results - Stopping")
+                logging.info(f"No more results - Stopping")
                 break
             all_data.extend(data)
         else:
-            print(f"Failed to fetch data, status code: {response.status_code}, response content: {response.content}")
+            logging.info(f"Failed to fetch data, status code: {response.status_code}, response content: {response.content}")
             break
 
     with open(f"/data/{JIRA_PROJECT}.json", 'w') as outfile:

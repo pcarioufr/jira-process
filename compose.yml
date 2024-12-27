@@ -15,4 +15,4 @@ services:
       - JIRA_STATUSES
       - JIRA_FIELDS
       - MAX_RESULTS=10000
-    command: python3 main.py
+    command: python3 -u main.py
